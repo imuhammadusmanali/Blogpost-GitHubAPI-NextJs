@@ -1,5 +1,5 @@
 // https://<your-site.com>/api/revalidate?secret=<token>
-// http://localhost:3000/api/revalidate?path=/&secret='54eb6dc5dc6c8bd1d5326c1b2621189b'
+// http://localhost:3000/api/revalidate?path=/&secret=54eb6dc5dc6c8bd1d5326c1b2621189b
 
 import { NextApiRequest, NextApiResponse } from 'next';
 
