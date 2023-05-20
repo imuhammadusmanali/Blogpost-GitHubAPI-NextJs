@@ -1,4 +1,9 @@
 import { compileMDX } from 'next-mdx-remote/rsc';
+import rehypeAutolinkHeadings from 'rehype-autolink-headings/lib';
+import rehypeHighlight from 'rehype-highlight/lib';
+import rehypeSlug from 'rehype-slug';
+import Video from '@/app/components/Video';
+import CustomImage from '@/app/components/CustomImage';
 
 type Filetree = {
   tree: [
@@ -12,7 +17,7 @@ export async function getPostByName(
   fileName: string
 ): Promise<BlogPost | undefined> {
   const res = await fetch(
-    `https://raw.githubusercontent.com/imuhammadusmanali/Test-BlogPosts-NextJs/main/${fileName}`,
+    `https://raw.githubusercontent.com/gitdagray/test-blogposts/main/${fileName}`,
     {
       headers: {
         Accept: 'application/vnd.github+json',
@@ -25,6 +30,7 @@ export async function getPostByName(
   if (!res.ok) return undefined;
 
   const rawMDX = await res.text();
+
   if (rawMDX === '404: Not Found') return undefined;
 
   const { frontmatter, content } = await compileMDX<{
@@ -33,8 +39,24 @@ export async function getPostByName(
     tags: string[];
   }>({
     source: rawMDX,
+    components: {
+      Video,
+      CustomImage,
+    },
     options: {
       parseFrontmatter: true,
+      mdxOptions: {
+        rehypePlugins: [
+          rehypeHighlight,
+          rehypeSlug,
+          [
+            rehypeAutolinkHeadings,
+            {
+              behavior: 'wrap',
+            },
+          ],
+        ],
+      },
     },
   });
 
@@ -53,9 +75,9 @@ export async function getPostByName(
   return blogPostObj;
 }
 
-export async function getPostMeta(): Promise<Meta[] | undefined> {
+export async function getPostsMeta(): Promise<Meta[] | undefined> {
   const res = await fetch(
-    'https://api.github.com/repos/imuhammadusmanali/Test-BlogPosts-NextJs/git/trees/main?recursive=1',
+    'https://api.github.com/repos/gitdagray/test-blogposts/git/trees/main?recursive=1',
     {
       headers: {
         Accept: 'application/vnd.github+json',
@@ -67,16 +89,16 @@ export async function getPostMeta(): Promise<Meta[] | undefined> {
 
   if (!res.ok) return undefined;
 
-  const repoFileTree: Filetree = await res.json();
+  const repoFiletree: Filetree = await res.json();
 
-  const filesArray = repoFileTree.tree
+  const filesArray = repoFiletree.tree
     .map((obj) => obj.path)
     .filter((path) => path.endsWith('.mdx'));
 
   const posts: Meta[] = [];
+
   for (const file of filesArray) {
     const post = await getPostByName(file);
-
     if (post) {
       const { meta } = post;
       posts.push(meta);

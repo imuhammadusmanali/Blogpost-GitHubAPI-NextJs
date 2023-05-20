@@ -1,8 +1,8 @@
-import { getPostMeta } from '@/lib/posts';
+import { getPostsMeta } from '@/lib/posts';
 import ListItem from './ListItem';
 
 export default async function Posts() {
-  const posts = await getPostMeta();
+  const posts = await getPostsMeta();
 
   if (!posts) {
     return <p className="mt-10 text-center">Sorry, No posts are available!</p>;

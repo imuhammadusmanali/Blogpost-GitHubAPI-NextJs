@@ -1,7 +1,8 @@
 import getFormattedDate from '@/lib/getFormattedDate';
-import { getPostMeta, getPostByName } from '@/lib/posts';
+import { getPostsMeta, getPostByName } from '@/lib/posts';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
+import 'highlight.js/styles/github-dark.css';
 
 export const revalidate = 0;
 
@@ -12,7 +13,7 @@ type Props = {
 };
 
 // export async function generateStaticParams() {
-//   const posts = await getPostMeta();
+//   const posts = await getPostsMeta();
 
 //   if (!posts) return [];
 
